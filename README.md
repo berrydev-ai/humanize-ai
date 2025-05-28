@@ -2,6 +2,10 @@
 
 A Python library to humanize AI-generated text by normalizing Unicode characters to standard keyboard equivalents.
 
+[![PyPI version](https://img.shields.io/pypi/v/humanize-ai.svg)](https://pypi.org/project/humanize-ai/)
+[![Python versions](https://img.shields.io/pypi/pyversions/humanize-ai.svg)](https://pypi.org/project/humanize-ai/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
 ## Why Clean Up AI Text?
 
 AI-generated content often contains subtle markers that make it obvious to readers (and algorithms) that the text wasn't written by a human:
