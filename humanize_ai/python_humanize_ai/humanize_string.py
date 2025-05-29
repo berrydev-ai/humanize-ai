@@ -90,3 +90,42 @@ def humanize_string(text, options=None):
         text = new_text
 
     return {"count": count, "text": text}
+
+
+def humanize_json(obj, options=None):
+    """
+    Recursively humanize all string values in a dict, list, or JSON-like structure.
+
+    Args:
+        obj: The input object (dict, list, str, or other)
+        options (HumanizeOptions, optional): Options to control transformation behavior
+
+    Returns:
+        tuple: (cleaned_obj, total_count) where cleaned_obj is the cleaned structure and total_count is the sum of all changes
+    """
+    from .humanize_string import humanize_string, HumanizeOptions
+
+    if options is None:
+        options = HumanizeOptions()
+
+    if isinstance(obj, str):
+        result = humanize_string(obj, options)
+        return result['text'], result['count']
+    elif isinstance(obj, dict):
+        total_count = 0
+        cleaned = {}
+        for k, v in obj.items():
+            cleaned_v, count = humanize_json(v, options)
+            cleaned[k] = cleaned_v
+            total_count += count
+        return cleaned, total_count
+    elif isinstance(obj, list):
+        total_count = 0
+        cleaned = []
+        for item in obj:
+            cleaned_item, count = humanize_json(item, options)
+            cleaned.append(cleaned_item)
+            total_count += count
+        return cleaned, total_count
+    else:
+        return obj, 0
