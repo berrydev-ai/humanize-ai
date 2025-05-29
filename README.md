@@ -28,9 +28,9 @@ pip install humanize-ai
 ### As a Library
 
 ```python
-from humanize_ai import humanize_string, HumanizeOptions
+from humanize_ai import humanize_string, humanize_json, HumanizeOptions
 
-# With default options
+# Humanize a string with default options
 result = humanize_string(input_text)
 
 # Or with custom options
@@ -47,6 +47,20 @@ result = humanize_string(input_text, options)
 
 print(result['text'])  # Humanized text
 print(result['count'])  # Number of changed symbols
+
+# Humanize JSON structures (dicts, lists, nested objects)
+json_data = {
+    "title": "The\u200b Future\u200b of\u200b AI",  # Contains zero-width spaces
+    "message": "She said \u201Chello\u201D to everyone—right away",  # Fancy quotes and em-dash
+    "sections": [
+        "Introduction\u200b",  # Zero-width space
+        "Key\u00a0Points",     # Non-breaking space
+    ]
+}
+cleaned_json, count = humanize_json(json_data)
+
+print(cleaned_json)  # {'title': 'The Future of AI', 'message': 'She said "hello" to everyone-right away', 'sections': ['Introduction', 'Key Points']}
+print(count)  # Number of characters changed
 ```
 
 ### Command Line
