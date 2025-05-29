@@ -8,6 +8,7 @@ Licensed under the MIT license
 
 import re
 import regex
+from typing import Dict, List, Tuple, Union, Any
 
 # Constants - set of characters to transform
 IGNORABLE_SYMBOLS = "\u00ad\u180e\u200b-\u200f\u202a-\u202e\u2060\u2066-\u2069\ufeff"
@@ -92,19 +93,22 @@ def humanize_string(text, options=None):
     return {"count": count, "text": text}
 
 
-def humanize_json(obj, options=None):
+def humanize_json(
+    obj: Union[Dict[Any, Any], List[Any], str, Any],
+    options=None
+) -> Tuple[Any, int]:
     """
     Recursively humanize all string values in a dict, list, or JSON-like structure.
 
     Args:
         obj: The input object (dict, list, str, or other)
-        options (HumanizeOptions, optional): Options to control transformation behavior
+        options: Options to control transformation behavior
 
     Returns:
-        tuple: (cleaned_obj, total_count) where cleaned_obj is the cleaned structure and total_count is the sum of all changes
+        A tuple containing:
+            - The cleaned object with humanized strings
+            - Total count of characters changed
     """
-    from .humanize_string import humanize_string, HumanizeOptions
-
     if options is None:
         options = HumanizeOptions()
 
@@ -115,17 +119,23 @@ def humanize_json(obj, options=None):
         total_count = 0
         cleaned = {}
         for k, v in obj.items():
-            cleaned_v, count = humanize_json(v, options)
-            cleaned[k] = cleaned_v
-            total_count += count
+            # Also humanize keys if they are strings
+            if isinstance(k, str):
+                cleaned_k, k_count = humanize_json(k, options)
+                total_count += k_count
+            else:
+                cleaned_k = k
+            cleaned_v, v_count = humanize_json(v, options)
+            cleaned[cleaned_k] = cleaned_v
+            total_count += v_count
         return cleaned, total_count
     elif isinstance(obj, list):
         total_count = 0
-        cleaned = []
+        cleaned_list: List[Any] = []
         for item in obj:
             cleaned_item, count = humanize_json(item, options)
-            cleaned.append(cleaned_item)
+            cleaned_list.append(cleaned_item)
             total_count += count
-        return cleaned, total_count
+        return cleaned_list, total_count
     else:
         return obj, 0
